@@ -19,6 +19,7 @@
 #define GENIUS_HARDWARE             0x20
 #define OWL_PEDAL_HARDWARE          0x21
 #define OWL_MODULAR_HARDWARE        0x22
+#define AXOLOTI_HARDWARE            0xA2
 #define OTHER_HARDWARE              0xf0
 
 #endif /* __HARDWARE_IDS_H */
