@@ -26,6 +26,8 @@
 
 /* USER CODE BEGIN Includes */
 #include "usbh_midi.h"
+#include "device.h"
+#include "errorhandlers.h"
 /* USER CODE END Includes */
 
 /* USER CODE BEGIN PV */
@@ -58,7 +60,11 @@ static void USBH_UserProcess(USBH_HandleTypeDef *phost, uint8_t id);
  * -- Insert your external function declaration here --
  */
 /* USER CODE BEGIN 1 */
-
+void MX_USB_HOST_Process() 
+{
+  /* USB Host Background task */
+    USBH_Process(&USBH_HANDLE); 						
+}
 /* USER CODE END 1 */
 
 /**
@@ -95,25 +101,30 @@ void MX_USB_HOST_Init(void)
 static void USBH_UserProcess  (USBH_HandleTypeDef *phost, uint8_t id)
 {
   /* USER CODE BEGIN CALL_BACK_1 */
-  switch(id)
-  {
-  case HOST_USER_SELECT_CONFIGURATION:
-  break;
-
-  case HOST_USER_DISCONNECTION:
-  Appli_state = APPLICATION_DISCONNECT;
-  break;
-
-  case HOST_USER_CLASS_ACTIVE:
-  Appli_state = APPLICATION_READY;
-  break;
-
+  switch(id){ 
   case HOST_USER_CONNECTION:
-  Appli_state = APPLICATION_START;
-  break;
-
+    Appli_state = APPLICATION_START;
+    break;
+  case HOST_USER_CLASS_SELECTED:
+    break;
+  case HOST_USER_CLASS_ACTIVE:
+    if(Appli_state == APPLICATION_START){
+      usbh_midi_begin();
+      Appli_state = APPLICATION_READY;
+    }
+    break;
+  case HOST_USER_DISCONNECTION:
+    Appli_state = APPLICATION_DISCONNECT;
+    usbh_midi_reset();
+    break;
+  case HOST_USER_UNRECOVERED_ERROR:
+    usbh_midi_reset(); // reset and hope for the best
+    error(USB_ERROR, "USB Host unrecovered error");
+    break;
+  case HOST_USER_SELECT_CONFIGURATION:
+    break;
   default:
-  break;
+    break; 
   }
   /* USER CODE END CALL_BACK_1 */
 }

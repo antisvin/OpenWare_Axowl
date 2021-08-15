@@ -49,6 +49,8 @@
 /* Exported functions prototypes ---------------------------------------------*/
 void SysTick_Handler(void);
 void DMA2_Stream0_IRQHandler(void);
+void DMA2_Stream1_IRQHandler(void);
+void DMA2_Stream4_IRQHandler(void);
 void OTG_FS_IRQHandler(void);
 void OTG_HS_IRQHandler(void);
 /* USER CODE BEGIN EFP */

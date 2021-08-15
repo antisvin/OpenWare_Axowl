@@ -36,7 +36,10 @@
 
 #define USE_ADC
 #define ADC_PERIPH hadc1
-//#define USE_CODEC
+#define USE_CODEC
+#define USE_ADAU1961
+#define CODEC_I2C_HANDLE hi2c3
+#define CODEC_ADDRESS    0x38
 
 #define NOF_ADC_VALUES               8
 #define NOF_PARAMETERS               40

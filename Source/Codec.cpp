@@ -8,7 +8,7 @@
 
 #include "CircularBuffer.h"
 
-#ifdef USE_CS4271
+#if defined USE_CS4271 || defined USE_ADAU1961
 #define HSAI_RX hsai_BlockB1
 #define HSAI_TX hsai_BlockA1
 #define HDMA_RX hdma_sai1_b
@@ -45,7 +45,7 @@ typedef int8_t audio_t;
 #endif
 
 static void update_rx_read_index(){
-#if defined USE_CS4271 || defined USE_PCM3168A
+#if defined USE_CS4271 || defined USE_PCM3168A || defined USE_ADAU1961
   // NDTR: the number of remaining data units in the current DMA Stream transfer.
   // use HDMA_TX position in case we have stopped HDMA_RX
   // todo: if(wet) then read position is incremented by audioCallback ?
@@ -57,7 +57,7 @@ static void update_rx_read_index(){
 }
 
 static void update_tx_write_index(){
-#if defined USE_CS4271 || defined USE_PCM3168A
+#if defined USE_CS4271 || defined USE_PCM3168A || defined USE_ADAU1961
   // NDTR: the number of remaining data units in the current DMA Stream transfer.
   size_t pos = CODEC_BUFFER_SIZE - __HAL_DMA_GET_COUNTER(&HDMA_TX);
   // // mask to full frame (assumes AUDIO_CHANNELS is a power of two)
@@ -384,7 +384,7 @@ extern "C"{
 }
 #endif /* USE_WM8731 */
 
-#if defined USE_CS4271 || defined USE_PCM3168A
+#if defined USE_CS4271 || defined USE_PCM3168A || defined USE_ADAU1961
 
 extern "C" {
   extern SAI_HandleTypeDef HSAI_RX;
@@ -415,7 +415,7 @@ void Codec::start(){
   // codec_blocksize = min(CODEC_BUFFER_SIZE/(AUDIO_CHANNELS*2), settings.audio_blocksize);
   codec_blocksize = CODEC_BUFFER_SIZE/(AUDIO_CHANNELS*2);
   HAL_StatusTypeDef ret;
-#ifdef USE_CS4271
+#if defined USE_CS4271 || defined USE_ADAU1961
   ret = HAL_SAI_Receive_DMA(&HSAI_RX, (uint8_t*)codec_rxbuf, codec_blocksize*AUDIO_CHANNELS*2);
   if(ret == HAL_OK)
     ret = HAL_SAI_Transmit_DMA(&HSAI_TX, (uint8_t*)codec_txbuf, codec_blocksize*AUDIO_CHANNELS*2);

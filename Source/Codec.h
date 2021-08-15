@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include "device.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -13,9 +14,16 @@ extern "C" {
   void codec_set_gain_in(int8_t volume);
   void codec_set_gain_out(int8_t volume);
   void codec_mute(bool doMute);
+#ifdef USE_ADAU1961
+  void codec_read(uint16_t re);
+#else
   uint8_t codec_read(uint8_t reg);
+#endif
 #ifdef USE_WM8731
   void codec_write(uint8_t reg, uint16_t data);
+#elif defined USE_ADAU1961
+  void codec_write(uint16_t reg, uint8_t data);
+  void codec_write_block(uint16_t reg, const uint8_t* data);
 #else
   void codec_write(uint8_t reg, uint8_t data);
 #endif
