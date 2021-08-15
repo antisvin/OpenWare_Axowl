@@ -85,7 +85,11 @@ void SDRAM_Initialization_Sequence(SDRAM_HandleTypeDef *hsdram){
   __IO uint32_t tmpmrd =0;
   /* Step 1:  Configure a clock configuration enable command */
   command.CommandMode = FMC_SDRAM_CMD_CLK_ENABLE;
+#ifdef OWL_AXOLOTI
+  command.CommandTarget = FMC_SDRAM_CMD_TARGET_BANK1;
+#else
   command.CommandTarget = FMC_SDRAM_CMD_TARGET_BANK2;
+#endif
   command.AutoRefreshNumber = 1;
   command.ModeRegisterDefinition = 0;
 
@@ -99,7 +103,11 @@ void SDRAM_Initialization_Sequence(SDRAM_HandleTypeDef *hsdram){
 
   /* Step 3: Configure a PALL (precharge all) command */
   command.CommandMode = FMC_SDRAM_CMD_PALL;
+#ifdef OWL_AXOLOTI
+  command.CommandTarget = FMC_SDRAM_CMD_TARGET_BANK1;
+#else
   command.CommandTarget = FMC_SDRAM_CMD_TARGET_BANK2;
+#endif
   command.AutoRefreshNumber = 1;
   command.ModeRegisterDefinition = 0;
 
@@ -109,24 +117,36 @@ void SDRAM_Initialization_Sequence(SDRAM_HandleTypeDef *hsdram){
 
   /* Step 4 : Configure a Auto-Refresh command */
   command.CommandMode = FMC_SDRAM_CMD_AUTOREFRESH_MODE;
+#ifdef OWL_AXOLOTI
+  command.CommandTarget = FMC_SDRAM_CMD_TARGET_BANK1;
+#else
   command.CommandTarget = FMC_SDRAM_CMD_TARGET_BANK2;
+#endif
   command.AutoRefreshNumber = 8;
-  command.ModeRegisterDefinition = 0;
+    command.ModeRegisterDefinition = 0;
 
   /* Send the command */
   if(HAL_SDRAM_SendCommand(hsdram, &command, 0x1000) != HAL_OK)
     error(MEM_ERROR, "SDRAM cmd3 error");
 
   /* Step 5: Program the external memory mode register */
+#ifdef OWL_AXOLOTI
+  tmpmrd = (uint32_t)SDRAM_MODEREG_BURST_LENGTH_2          |
+                     SDRAM_MODEREG_BURST_TYPE_SEQUENTIAL   |
+                     SDRAM_MODEREG_CAS_LATENCY_2           |
+                     SDRAM_MODEREG_OPERATING_MODE_STANDARD |
+                     SDRAM_MODEREG_WRITEBURST_MODE_SINGLE;
+  command.CommandTarget = FMC_SDRAM_CMD_TARGET_BANK1;
+#else
   tmpmrd = (uint32_t)SDRAM_MODEREG_BURST_LENGTH_1          |
                      SDRAM_MODEREG_BURST_TYPE_SEQUENTIAL   |
                      SDRAM_MODEREG_CAS_LATENCY_3           |
                      SDRAM_MODEREG_OPERATING_MODE_STANDARD |
                      SDRAM_MODEREG_WRITEBURST_MODE_SINGLE;
-
-  command.CommandMode = FMC_SDRAM_CMD_LOAD_MODE;
   command.CommandTarget = FMC_SDRAM_CMD_TARGET_BANK2;
+#endif
   command.AutoRefreshNumber = 1;
+  command.CommandMode = FMC_SDRAM_CMD_LOAD_MODE;
   command.ModeRegisterDefinition = tmpmrd;
 
   /* Send the command */
@@ -136,7 +156,11 @@ void SDRAM_Initialization_Sequence(SDRAM_HandleTypeDef *hsdram){
   /* Step 6: Set the refresh rate counter */
   /* (15.62 us x Freq) - 20 */
   /* Set the device refresh counter */
+//#ifdef OWL_AXOLOTI
+//  hsdram->Instance->SDRTR |= ((uint32_t)((683)<< 1));
+//#else
   hsdram->Instance->SDRTR |= ((uint32_t)((1292)<< 1));
+//#endif
 }
 
 #ifdef INIT_FMC
