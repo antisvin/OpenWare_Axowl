@@ -119,7 +119,7 @@ void codec_init() {
   codec_write(ADAU1961_REG_R14_ALC3, 0x00);
 
   codec_write(ADAU1961_REG_R15_SERP0, 0x01); // codec is master
-                                             // chSysUnlock();
+
   codec_write_block(ADAU1961_REG_R1_PLLC, &pllreg[0]);
   // dmaStreamClearInterrupt(sai_b_dma);
   // dmaStreamEnable(sai_b_dma);

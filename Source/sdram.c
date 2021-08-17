@@ -156,11 +156,11 @@ void SDRAM_Initialization_Sequence(SDRAM_HandleTypeDef *hsdram){
   /* Step 6: Set the refresh rate counter */
   /* (15.62 us x Freq) - 20 */
   /* Set the device refresh counter */
-//#ifdef OWL_AXOLOTI
-//  hsdram->Instance->SDRTR |= ((uint32_t)((683)<< 1));
-//#else
+#ifdef OWL_AXOLOTI
+  hsdram->Instance->SDRTR |= ((uint32_t)((683)<< 1));
+#else
   hsdram->Instance->SDRTR |= ((uint32_t)((1292)<< 1));
-//#endif
+#endif
 }
 
 #ifdef INIT_FMC

@@ -1,6 +1,7 @@
 PROJECT = Axoloti
 BUILDROOT = .
 OPENWARE ?= $(BUILDROOT)/..
+LDSCRIPT = $(OPENWARE)/Hardware/axoloti.ld
 
 include $(OPENWARE)/Hardware/owl2.mk
 

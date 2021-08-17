@@ -7,7 +7,7 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2021 STMicroelectronics.
+  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under Ultimate Liberty license
@@ -32,7 +32,8 @@
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
-
+#define HUSB_HOST hUsbHostHS
+#define HUSB_HOST_HSFS HOST_HS
 /* USER CODE END PV */
 
 /* USER CODE BEGIN PFP */
@@ -41,7 +42,7 @@
 /* USER CODE END PFP */
 
 /* USB Host core handle declaration */
-USBH_HandleTypeDef hUsbHostHS;
+USBH_HandleTypeDef HUSB_HOST;
 ApplicationTypeDef Appli_state = APPLICATION_IDLE;
 
 /*
@@ -60,11 +61,24 @@ static void USBH_UserProcess(USBH_HandleTypeDef *phost, uint8_t id);
  * -- Insert your external function declaration here --
  */
 /* USER CODE BEGIN 1 */
+
+/*
+ * Background task
+*/ 
 void MX_USB_HOST_Process() 
 {
   /* USB Host Background task */
-    USBH_Process(&USBH_HANDLE); 						
+  USBH_Process(&HUSB_HOST);
+  /* if(Appli_state == APPLICATION_DISCONNECT){ */
+    /* USBH_Stop(&HUSB_HOST); */
+    /* USBH_DeInit(&HUSB_HOST); */
+  /*   Appli_state = APPLICATION_DISCONNECTED; */
+  /* }else if(Appli_state == APPLICATION_DISCONNECTED){ */
+  /*   MX_USB_HOST_Init(); */
+  /*   Appli_state = APPLICATION_IDLE; */
+  /* }   */
 }
+
 /* USER CODE END 1 */
 
 /**
@@ -74,24 +88,24 @@ void MX_USB_HOST_Process()
 void MX_USB_HOST_Init(void)
 {
   /* USER CODE BEGIN USB_HOST_Init_PreTreatment */
-
+  
   /* USER CODE END USB_HOST_Init_PreTreatment */
-
+  
   /* Init host Library, add supported class and start the library. */
-  if (USBH_Init(&hUsbHostHS, USBH_UserProcess, HOST_HS) != USBH_OK)
+  if (USBH_Init(&HUSB_HOST, USBH_UserProcess, HUSB_HOST_HSFS) != USBH_OK)
   {
     Error_Handler();
   }
-  if (USBH_RegisterClass(&hUsbHostHS, USBH_MIDI_CLASS) != USBH_OK)
+  if (USBH_RegisterClass(&HUSB_HOST, USBH_MIDI_CLASS) != USBH_OK)
   {
     Error_Handler();
   }
-  if (USBH_Start(&hUsbHostHS) != USBH_OK)
+  if (USBH_Start(&HUSB_HOST) != USBH_OK)
   {
     Error_Handler();
   }
   /* USER CODE BEGIN USB_HOST_Init_PostTreatment */
-
+  
   /* USER CODE END USB_HOST_Init_PostTreatment */
 }
 
@@ -101,30 +115,39 @@ void MX_USB_HOST_Init(void)
 static void USBH_UserProcess  (USBH_HandleTypeDef *phost, uint8_t id)
 {
   /* USER CODE BEGIN CALL_BACK_1 */
-  switch(id){ 
+  USBH_UsrLog("USBH UserProcess %d %d %d", phost->EnumState, phost->gState, id);
+  switch(id)
+  {
+  case HOST_USER_SELECT_CONFIGURATION:
+    break;
+
   case HOST_USER_CONNECTION:
     Appli_state = APPLICATION_START;
     break;
-  case HOST_USER_CLASS_SELECTED:
-    break;
+
   case HOST_USER_CLASS_ACTIVE:
     if(Appli_state == APPLICATION_START){
       usbh_midi_begin();
       Appli_state = APPLICATION_READY;
     }
     break;
+
   case HOST_USER_DISCONNECTION:
     Appli_state = APPLICATION_DISCONNECT;
     usbh_midi_reset();
     break;
+
   case HOST_USER_UNRECOVERED_ERROR:
-    usbh_midi_reset(); // reset and hope for the best
-    error(USB_ERROR, "USB Host unrecovered error");
+    phost->Control.state = CTRL_SETUP; 
+    phost->RequestState = CMD_SEND;
+    Appli_state = APPLICATION_DISCONNECT;
+    /* usbh_midi_reset(); // reset and hope for the best */
+    USBH_LL_ResetPort(&USBH_HANDLE);
+    error(USB_ERROR, "USB Host error");
     break;
-  case HOST_USER_SELECT_CONFIGURATION:
-    break;
+
   default:
-    break; 
+    break;
   }
   /* USER CODE END CALL_BACK_1 */
 }
