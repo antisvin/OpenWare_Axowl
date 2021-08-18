@@ -24,14 +24,14 @@
 
 #define USE_BKPSRAM
 
-#define ADC_A 5
-#define ADC_B 6
-#define ADC_C 7
-#define ADC_D 2
-#define ADC_E 3
-#define ADC_F 4
-#define ADC_G 1
-#define ADC_H 0
+#define ADC_A 0
+#define ADC_B 1
+#define ADC_C 2
+#define ADC_D 3
+#define ADC_E 4
+#define ADC_F 5
+#define ADC_G 6
+#define ADC_H 7
 #define AUDIO_OUTPUT_GAIN            103
 
 #define USE_ADC
