@@ -63,6 +63,8 @@ void Error_Handler(void);
 #define S1_Pin GPIO_PIN_5
 #define S1_GPIO_Port GPIOB
 #define S1_EXTI_IRQn EXTI9_5_IRQn
+#define USB_POWERSW_Pin GPIO_PIN_7
+#define USB_POWERSW_GPIO_Port GPIOD
 #define LED3_Pin GPIO_PIN_9
 #define LED3_GPIO_Port GPIOB
 #define USBD_DP_Pin GPIO_PIN_12
