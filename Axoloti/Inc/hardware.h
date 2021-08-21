@@ -22,6 +22,13 @@
 #define USB_HOST_RX_BUFF_SIZE 256  /* Max Received data 64 bytes */
 #define USE_USBH_MIDI
 
+// Serial MIDI
+#define USE_UART_MIDI_RX
+#define USE_UART_MIDI_TX
+#define UART_MIDI_HANDLE huart6
+#define UART_MIDI_RX_BUFFER_SIZE 256
+
+
 #define USE_BKPSRAM
 
 #define ADC_A 0
