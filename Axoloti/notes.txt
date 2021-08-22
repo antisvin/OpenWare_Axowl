@@ -1,2 +1,6 @@
 SDRAM - Alliance as4c4m16sa-7bcn
 
+Params : A B C / D E F / G H (joy)
+Buttons: 1 2 3 4 (4 = joy, pushbuton)
+
+Patch selection L/R - single press, or press and select
