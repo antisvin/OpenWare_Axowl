@@ -28,17 +28,17 @@ As for memory, firmware uses first 48kb of SRAM. Patches code is loaded to SRAM 
 
 ## How can I run it?
 
-1. Install the OWL bootlader (MidiBoot-Axoloti.bin file) in DFU mode. DFU mode is entered by pressing the tiny S1 switch when device is booting. After that you can use dfu-util or [webdfu](https://devanlai.github.io/webdfu/dfu-util/) to flash bootlader binary to addres
+1. Install the OWL bootloader (MidiBoot-Axoloti.bin file) in DFU mode. DFU mode is entered by pressing the tiny S1 switch when device is booting. After that you can use dfu-util or [WebDFU](https://devanlai.github.io/webdfu/dfu-util/) to flash bootloader binary to address 0x08000000
 
 2. After flashing bootloader and rebooting you should be able to see a new USB MIDI device name named ``OWL-BOOT``
 
-3. Flash firmware by playing MIDI SySex file (Axoloti.syx). Specific utility to play MIDI depends on OS used (i.e. amidi on Linux), but you can use official [Rebel Technlology flash page](https://www.openwarelab.org/Tools/firmware.html) in Chromium based browsers
+3. Flash firmware by playing MIDI SySex file (Axoloti.syx). Specific utility to play MIDI depends on OS used (i.e. amidi on Linux), but you can use official [Rebel Technlology flash page](https://www.openwarelab.org/Tools/firmware.html) in Chromium-based browsers.
 
 4. Wait for device LED to stop flashing (firmware loading should take 5-10 seconds)
 
-5. It's recommended to erase patch if you're flashing Axowl for the first time. This can be done using [OpenWare tool](https://pingdynasty.github.io/OwlWebControl/extended.html)
+5. It's recommended to erase patch if you're flashing Axowl for the first time. This can be done using [OpenWare tool](https://pingdynasty.github.io/OwlWebControl/extended.html).
 
-If all went well, you should end up with a working firmware after rebooting Axoloti
+If all went well, you should end up with a working firmware after rebooting Axoloti. USB device name would be ``OWL-AXOLOTI``
 
 ## Where can I get binaries?
 
@@ -83,9 +83,9 @@ Switches S1/S2 are used for selecting patches. There are 2 ways to do it:
 
 1. A single click loads previous or next patch when button is released
 
-2. Keeping a button pressed an clicking the opposite buttons allows you to select previous/next patch that only gets loaded when first button is released. You can press second button multiple times, thus you can skip patches instead of loading them one by one.
+2. Keeping a button pressed and clicking the opposite button allows you to select previous/next patch that only gets loaded when first button is released. You can press second button multiple times, thus you can skip patches instead of loading them one by one.
 
-When you're in patch selection mode, LEDs are used to display currently selected patch number as binary numbers. Patch number is displayed with most signifant bit on the left (LED for button 4). For example patch number 3 is displayed as two unlit LEDs followed by 2 lit LEDs.
+When you're in patch selection mode, LEDs are used to display currently selected patch number as binary numbers. Patch number is displayed with most significant bit on the left (LED for button 4). For example patch number 3 is displayed as two unlit LEDs followed by 2 lit LEDs.
 
 ## I have more questions!
 
