@@ -32,7 +32,7 @@ As for memory, firmware uses first 48kb of SRAM. Patches code is loaded to SRAM 
 
 2. After flashing bootloader and rebooting you should be able to see a new USB MIDI device name named ``OWL-BOOT``
 
-3. Flash firmware by playing MIDI SySex file (Axoloti.syx). Specific utility to play MIDI depends on OS used (i.e. amidi on Linux), but you can use official [Rebel Technlology flash page](https://www.openwarelab.org/Tools/firmware.html) in Chromium-based browsers.
+3. Flash firmware by playing MIDI SySex file (Axoloti.syx). Specific utility to play MIDI depends on OS used (i.e. amidi on Linux), but you can use official [Rebel Technology flash page](https://www.openwarelab.org/Tools/firmware.html) in Chromium-based browsers.
 
 4. Wait for device LED to stop flashing (firmware loading should take 5-10 seconds)
 
@@ -44,11 +44,11 @@ If all went well, you should end up with a working firmware after rebooting Axol
 
 https://github.com/antisvin/OpenWare/releases
 
-MidiBoot-Axoloty-*.bin is the bootloader file. There's also a sysex version which can be used to flash bootloader when firmware is running.
+MidiBoot-Axoloti-*.bin is the bootloader file. There's also a sysex version which can be used to flash bootloader when firmware is running.
 
-Axoloty-*.syx is firmware binary converted to SySex format.
+Axoloti-*.syx is firmware binary converted to SySex format.
 
-## How can I build firmware from source?
+## How can I build Axowl from source?
 
 You will need to use the following branches from Github:
 * MIDI bootloader - https://github.com/antisvin/OpenWare/tree/axoloti/AxolotiBoot
@@ -60,9 +60,9 @@ There's nothing preventing you from going flashing original Axoloti bootloader i
 
 ## How do I build patches?
 
-You can use upstream [OwlProgram](https://github.com/pingdynasty/OwlProgram) repo to build patches locally or online in the [patcher page](https://www.rebeltech.org/patch-library/patches/latest). Existing patch binaries are expected to be work as is, however note that there's no guarantee that patch was written with exactly the same controls in mind (i.e. could require more inputs or generate CV outputs).
+You can use the upstream [OwlProgram](https://github.com/pingdynasty/OwlProgram) repo to build patches locally or do it online in the [web patcher page](https://www.rebeltech.org/patch-library/patches/latest). Existing patch binaries in web patcher are expected to work as is, however note that there's no guarantee that patch was written with exactly the same controls in mind (i.e. could require more inputs or generate CV outputs).
 
-[OWL docs](https://www.openwarelab.org/) should still apply.
+[OWL docs](https://www.openwarelab.org/) fully apply and should be used as a reference for writing patches.
 
 ## How are patches controlled?
 
@@ -83,15 +83,15 @@ Switches S1/S2 are used for selecting patches. There are 2 ways to do it:
 
 1. A single click loads previous or next patch when button is released
 
-2. Keeping a button pressed and clicking the opposite button allows you to select previous/next patch that only gets loaded when first button is released. You can press second button multiple times, thus you can skip patches instead of loading them one by one.
+2. Keeping a button pressed and clicking the opposite button allows you to select previous/next patch that only gets loaded when first button is released. You can press the second button multiple times, thus you can skip patches instead of loading them one by one.
 
-When you're in patch selection mode, LEDs are used to display currently selected patch number as binary numbers. Patch number is displayed with most significant bit on the left (LED for button 4). For example patch number 3 is displayed as two unlit LEDs followed by 2 lit LEDs.
+When you're in this patch selection mode, LEDs are used to display currently selected patch number as binary numbers. Patch number is displayed with most significant bit on the left (LED for button 4). For example patch number 3 is displayed as two unlit LEDs followed by 2 lit LEDs.
 
 ## I have more questions!
 
 This port should be discussed on Axoloti forum in Axowl announcement thread.
 
-Questions about writing patches (unrelated to Axowl) can be asked on [RebelTech forum](https://community.rebeltech.org/) (and might be answered already).
+Questions about writing patches (unrelated to Axowl) can be asked on [RebelTech forum](https://community.rebeltech.org/) (and might be answered already, use the search function).
 
 # Changelog
 
