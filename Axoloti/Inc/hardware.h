@@ -13,8 +13,10 @@
 #define AUDIO_SAMPLE_TO_INT32(x)    ((int32_t)(x)<<8)
 
 #define USE_USBD_AUDIO
+#define USE_USBD_RX_FB
+#define USE_USBD_AUDIO_FEATURES
 #define USE_USBD_AUDIO_TX  // microphone
-/* #define USE_USBD_AUDIO_RX // speaker */
+#define USE_USBD_AUDIO_RX // speaker
 #define USE_USBD_FS
 #define USBD_HANDLE hUsbDeviceFS
 #define USBH_HANDLE hUsbHostHS
@@ -27,7 +29,6 @@
 #define USE_UART_MIDI_TX
 #define UART_MIDI_HANDLE huart6
 #define UART_MIDI_RX_BUFFER_SIZE 256
-
 
 #define USE_BKPSRAM
 

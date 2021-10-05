@@ -8,9 +8,9 @@ include $(OPENWARE)/Hardware/owl2.mk
 C_SRC = $(filter-out Src/test.c, $(wildcard Src/*.c))
 CPP_SRC = $(wildcard Src/*.cpp)
 C_SRC += $(OPENWARE)/Source/sdram.c
-C_SRC += $(OPENWARE)/Source/usbd_audio.c
 C_SRC += $(OPENWARE)/Source/adau1961.c
 CPP_SRC += $(OPENWARE)/Source/usbh_midi.cpp
+CPP_SRC += $(OPENWARE)/Source/usbd_audio.cpp
 CPP_SRC += $(OPENWARE)/Source/uart.cpp
 CPP_SRC += $(OPENWARE)/Source/uart_midi.cpp
 CPP_SRC += $(OPENWARE)/Source/MidiStreamReader.cpp
