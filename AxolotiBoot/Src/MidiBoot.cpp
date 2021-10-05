@@ -106,7 +106,7 @@ void eraseFromFlash(uint8_t sector){
 }
 
 void saveToFlash(uint8_t sector, void* data, uint32_t length){
-  if(sector == FIRMWARE_SECTOR && length <= (64+3*128)*1024){
+  if(sector == FIRMWARE_SECTOR && length <= (64+2*128)*1024){
     eeprom_unlock();
     eeprom_erase_sector(FLASH_SECTOR_4);
     if(length > 64*1024){

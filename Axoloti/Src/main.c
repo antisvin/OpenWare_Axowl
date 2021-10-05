@@ -98,7 +98,7 @@ void initialise_monitor_handles(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-#ifdef DEBUG
+#ifdef DEBUG__FALSE
 #warning "DEBUG uses printf and semihosting!"
   if(CoreDebug->DHCSR & 0x01)
     initialise_monitor_handles(); // remove when not semi-hosting
@@ -678,9 +678,11 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_Init(GPIOG, &GPIO_InitStruct);
 
   /*Configure GPIO pins : PB4 PB3 PB7 PB6
-                           PB2 PB12 PB10 PB11 */
+                           PB2 PB12 PB13 PB10
+                           PB11 */
   GPIO_InitStruct.Pin = GPIO_PIN_4|GPIO_PIN_3|GPIO_PIN_7|GPIO_PIN_6
-                          |GPIO_PIN_2|GPIO_PIN_12|GPIO_PIN_10|GPIO_PIN_11;
+                          |GPIO_PIN_2|GPIO_PIN_12|GPIO_PIN_13|GPIO_PIN_10
+                          |GPIO_PIN_11;
   GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
@@ -702,8 +704,8 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PA15 PA9 */
-  GPIO_InitStruct.Pin = GPIO_PIN_15|GPIO_PIN_9;
+  /*Configure GPIO pin : PA15 */
+  GPIO_InitStruct.Pin = GPIO_PIN_15;
   GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);

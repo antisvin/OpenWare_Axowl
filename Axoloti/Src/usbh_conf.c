@@ -71,17 +71,9 @@ void HAL_HCD_MspInit(HCD_HandleTypeDef* hcdHandle)
 
     __HAL_RCC_GPIOB_CLK_ENABLE();
     /**USB_OTG_HS GPIO Configuration
-    PB13     ------> USB_OTG_HS_VBUS
     PB14     ------> USB_OTG_HS_DM
     PB15     ------> USB_OTG_HS_DP
     */
-   /*
-    GPIO_InitStruct.Pin = USBH_VBUS_Pin;
-    GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
-    HAL_GPIO_Init(USBH_VBUS_GPIO_Port, &GPIO_InitStruct);
-    */
-
     GPIO_InitStruct.Pin = USBH_DM_Pin|USBH_DP_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
@@ -93,7 +85,7 @@ void HAL_HCD_MspInit(HCD_HandleTypeDef* hcdHandle)
     __HAL_RCC_USB_OTG_HS_CLK_ENABLE();
 
     /* Peripheral interrupt init */
-    HAL_NVIC_SetPriority(OTG_HS_IRQn, 8, 0);
+    HAL_NVIC_SetPriority(OTG_HS_IRQn, 5, 0);
     HAL_NVIC_EnableIRQ(OTG_HS_IRQn);
   /* USER CODE BEGIN USB_OTG_HS_MspInit 1 */
 
@@ -112,7 +104,6 @@ void HAL_HCD_MspDeInit(HCD_HandleTypeDef* hcdHandle)
     __HAL_RCC_USB_OTG_HS_CLK_DISABLE();
 
     /**USB_OTG_HS GPIO Configuration
-    PB13     ------> USB_OTG_HS_VBUS
     PB14     ------> USB_OTG_HS_DM
     PB15     ------> USB_OTG_HS_DP
     */
@@ -167,6 +158,7 @@ void HAL_HCD_Disconnect_Callback(HCD_HandleTypeDef *hhcd)
 void HAL_HCD_HC_NotifyURBChange_Callback(HCD_HandleTypeDef *hhcd, uint8_t chnum, HCD_URBStateTypeDef urb_state)
 {
   USBH_MIDI_NotifyURBChange(hhcd->pData, chnum, urb_state);
+
   /* To be used with OS to sync URB state with the global state machine */
 #if (USBH_USE_OS == 1)
   USBH_LL_NotifyURBChange(hhcd->pData);

@@ -24,12 +24,15 @@ SECTIONS
   .isr_vector :
   {
     . = ALIGN(4);
-    PROVIDE ( _ISR_VECTOR = . );
     KEEP(*(.isr_vector)) /* Startup code */
     . = ALIGN(4);
-    PROVIDE ( _ISR_VECTOR_END = . );
   } >FLASH
-  _ISR_VECTOR_SIZE = _ISR_VECTOR_END - _ISR_VECTOR;
+
+  .bootloader_token :
+  {
+    . = ALIGN(4);
+    KEEP(*(.bootloader_token));
+  } > FLASH
 
   /* The program code and other data goes into FLASH */
   .text :
@@ -100,7 +103,6 @@ SECTIONS
     _edata = .;        /* define a global symbol at data end */
   } >RAM AT> FLASH
 
-  
   /* Uninitialized data section */
   . = ALIGN(4);
   .bss :
@@ -111,6 +113,7 @@ SECTIONS
     *(.bss)
     *(.bss*)
     *(COMMON)
+
     . = ALIGN(4);
     _ebss = .;         /* define a global symbol at bss end */
     __bss_end__ = _ebss;
@@ -119,12 +122,11 @@ SECTIONS
   /* User_heap_stack section, used to check that there is enough RAM left */
   ._user_heap_stack :
   {
-    . = ALIGN(8);
+    . = ALIGN(4);
     PROVIDE ( _end = . );
-    PROVIDE ( end = . );
     . = . + _Min_Heap_Size;
     . = . + _Min_Stack_Size;
-    . = ALIGN(8);
+    . = ALIGN(4);
   } >RAM
   _estack = ORIGIN(RAM)+LENGTH(RAM); /* end of firmware RAM */
 
@@ -132,12 +134,11 @@ SECTIONS
   /* Example: int foo __attribute__ ((section (".ccmdata"))); */
   .ccmdata (NOLOAD) :
   {
-    *(.ccmdata)
-    . = ALIGN(8);
+    /* *(.ccmdata) */
+    /* . = ALIGN(8); */
     PROVIDE (_CCMRAM = .);
   } >CCMRAM
   _CCMRAM_END = ORIGIN(CCMRAM) + LENGTH(CCMRAM);
-  _CCMRAM_SIZE = _CCMRAM_END - _CCMRAM;
 
   /* External memory, vars must be located here explicitly */
   /* Example: int foo __attribute__ ((section (".extdata"))); */
@@ -148,14 +149,12 @@ SECTIONS
     PROVIDE ( _EXTRAM = . );
   } >EXTRAM
   _EXTRAM_END = ORIGIN(EXTRAM) + LENGTH(EXTRAM);
-  _EXTRAM_SIZE = LENGTH(EXTRAM);
 
   .patchram (NOLOAD) :
   {
     PROVIDE (_PATCHRAM = .);
   } >PATCHRAM
   _PATCHRAM_END = ORIGIN(PATCHRAM) + LENGTH(PATCHRAM);
-  _PATCHRAM_SIZE = LENGTH(PATCHRAM);
 
   .flash_storage (NOLOAD) :
   {
@@ -174,3 +173,5 @@ SECTIONS
 
   .ARM.attributes 0 : { *(.ARM.attributes) }
 }
+
+
