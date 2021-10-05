@@ -16,7 +16,7 @@ It is not, so use at your own risk.
 
 There's no support for SD cards in the OWL firmware itself, so it can't be used for the time being. It's planned to be added eventually.
 
-USB device on OWL is configured as a composite audio device, this occasionally makes some versions of Windows unhappy. USB audio is generating 2 channels that contain patch output.
+USB device on OWL is configured as a composite audio device, this occasionally makes some versions of Windows unhappy. USB audio is generating 2 channels that contain patch output and 2 channels that are sent to patch input.
 
 USB host in OWL currently doesn't handle reconnect correctly, this issue is waiting to be resolved in upstream firmware.
 
@@ -38,7 +38,13 @@ As for memory, firmware uses first 48kb of SRAM. Patches code is loaded to SRAM 
 
 5. It's recommended to erase patch if you're flashing Axowl for the first time. This can be done using [OpenWare tool](https://pingdynasty.github.io/OwlWebControl/extended.html).
 
-If all went well, you should end up with a working firmware after rebooting Axoloti. USB device name would be ``OWL-AXOLOTI``
+If all went well, you should end up with a working firmware after rebooting Axoloti. MIDI USB device name would change to ``OWL-AXOLOTI``
+
+## DFU is not working!
+
+STM32F4 bootloader is not fully compliant to DFU standard and that confuses some versions of dfu-util and other clients. The error message typically tries to tell you that it can't get memory map from device. It's recommended to use newer version of dfu-util that resolves that.
+
+An alternative solution is to use original Axoloti patcher. It's possible to replace the `firmware/build/axoloti.bin` with Axowl bootloader and it would happily flash it.
 
 ## Where can I get binaries?
 
