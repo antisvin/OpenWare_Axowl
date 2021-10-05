@@ -163,10 +163,8 @@ int main(void)
   /* Clear magic */
   *OWLBOOT_MAGIC_ADDRESS = 0;
 
-#if !defined OWL_PRISM && !defined OWL_BIOSIGNALS && !defined OWL_NOCTUA
   MX_FMC_Init();
   SDRAM_Initialization_Sequence(&hsdram1);   
-#endif
 #if 0
   /* USER CODE END SysInit */
 
