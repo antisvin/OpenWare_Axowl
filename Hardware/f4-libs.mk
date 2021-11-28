@@ -37,6 +37,10 @@ C_SRC_SAI += $(DRIVERS)/Src/stm32f4xx_hal_sai_ex.c
 C_SRC_SDRAM = $(DRIVERS)/Src/stm32f4xx_hal_sdram.c
 C_SRC_SDRAM += $(DRIVERS)/Src/stm32f4xx_ll_fmc.c
 
+# external SDRAM
+C_SRC_SD = $(DRIVERS)/Src/stm32f4xx_hal_sd.c
+C_SRC_SD += $(DRIVERS)/Src/stm32f4xx_ll_sdmmc.c
+
 # required by OWL 1
 C_SRC_SRAM = $(DRIVERS)/Src/stm32f4xx_hal_sram.c
 C_SRC_SRAM += $(DRIVERS)/Src/stm32f4xx_ll_fsmc.c

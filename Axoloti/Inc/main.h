@@ -90,6 +90,8 @@ void Error_Handler(void);
 #define SW3_Pin GPIO_PIN_3
 #define SW3_GPIO_Port GPIOC
 #define SW3_EXTI_IRQn EXTI3_IRQn
+#define SD_DETECT_Pin GPIO_PIN_13
+#define SD_DETECT_GPIO_Port GPIOD
 #define LED1_Pin GPIO_PIN_1
 #define LED1_GPIO_Port GPIOB
 #define LED4_Pin GPIO_PIN_0
