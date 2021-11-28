@@ -11,6 +11,7 @@ C_SRC += $(OPENWARE)/Source/sdram.c
 C_SRC += $(OPENWARE)/Source/adau1961.c
 C_SRC += $(OPENWARE)/Source/bsp_driver_sd.c
 C_SRC += $(OPENWARE)/Source/sd_diskio.c
+C_SRC += $(OPENWARE)/Source/fatfs.c
 C_SRC += $(FATFS_DIR)/diskio.c
 C_SRC += $(FATFS_DIR)/ff.c
 C_SRC += $(FATFS_DIR)/ff_gen_drv.c
