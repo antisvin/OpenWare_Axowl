@@ -67,6 +67,7 @@ extern SAI_HandleTypeDef hsai_BlockA1;
 extern SAI_HandleTypeDef hsai_BlockB1;
 extern DMA_HandleTypeDef hdma_sdio_rx;
 extern DMA_HandleTypeDef hdma_sdio_tx;
+extern SD_HandleTypeDef hsd;
 extern DMA_HandleTypeDef hdma_usart6_rx;
 extern DMA_HandleTypeDef hdma_usart6_tx;
 extern UART_HandleTypeDef huart6;
@@ -188,6 +189,20 @@ void EXTI15_10_IRQHandler(void)
   /* USER CODE BEGIN EXTI15_10_IRQn 1 */
 
   /* USER CODE END EXTI15_10_IRQn 1 */
+}
+
+/**
+  * @brief This function handles SDIO global interrupt.
+  */
+void SDIO_IRQHandler(void)
+{
+  /* USER CODE BEGIN SDIO_IRQn 0 */
+
+  /* USER CODE END SDIO_IRQn 0 */
+  HAL_SD_IRQHandler(&hsd);
+  /* USER CODE BEGIN SDIO_IRQn 1 */
+
+  /* USER CODE END SDIO_IRQn 1 */
 }
 
 /**

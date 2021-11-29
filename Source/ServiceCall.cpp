@@ -6,6 +6,9 @@
 #include "OpenWareMidiControl.h"
 #include "Storage.h"
 #include "Owl.h"
+#ifdef USE_FATFS
+#include "fatfs.h"
+#endif
 
 #ifdef USE_FFT_TABLES
 #include "arm_const_structs.h"
@@ -136,24 +139,71 @@ static int handleLoadResource(void** params, int len){
     const char* name = (const char*)params[0];
     uint8_t** buffer = (uint8_t**)params[1];
     uint32_t offset = *(uint32_t*)params[2];
+    if (offset & 0b11) // We require offset to be aligned to 4 bytes
+      return ret;
     uint32_t* max_size = (uint32_t*)params[3];
     Resource* res = storage.getResourceByName(name);
-    // We require offset to be aligned to 4 bytes
-    if (res != NULL && !(offset & 0b11)) {
+    if (res != NULL) {
       if (*buffer == NULL) {
         // Buffer pointer not given, so we will update value refenced by max_size with
         // actual resource size here
         *max_size = res->getDataSize() - offset;
-	if(res->isMemoryMapped())
-	  *buffer = (uint8_t*)res->getData() + offset;
-      }else{
-	uint32_t copy_size = min(*max_size, res->getDataSize() - offset);
+        if(res->isMemoryMapped())
+          *buffer = (uint8_t*)res->getData() + offset;
+      }
+      else {
+        uint32_t copy_size = min(*max_size, res->getDataSize() - offset);
         // Buffer pointer is given. We'll copy no more than max_size data into it.
-	storage.readResource(res, *buffer, offset, copy_size);
-	*max_size = copy_size; // update max_size parameter with amount of data actually copied
+        storage.readResource(res, *buffer, offset, copy_size);
+        *max_size = copy_size; // update max_size parameter with amount of data actually copied
       }
       ret = OWL_SERVICE_OK;
     }
+#ifdef USE_FATFS
+    // Fallback to read from FatFS
+    else {
+      FRESULT res;
+      // Mount storage. TODO: maybe add multi-storage support i.e. for SD + USB MSC
+      res = f_mount(&SDFatFS, (TCHAR const *)SDPath, 1);
+      if (res == FR_OK) {
+        // Note: Resource header allows up to 20 chars long file names, we enforce this
+        // for compatibility
+        char name_buf[36] = "0:/OWL/storage/"; // Prefix, 15 bytes long
+        strncat(name_buf, name, 20);
+        name_buf[35] = 0; // Force termination with 0 in case if patch sends us garbage
+        FILINFO fno;
+        res = f_stat(name_buf, &fno); // Read file stats to determine size first
+        if (res == FR_OK) {
+          // Open and seek into file
+          res = f_open(&SDFile, name_buf, FA_OPEN_EXISTING | FA_READ);
+          if (res == FR_OK) {
+            if (*buffer == nullptr) {
+              *max_size = fno.fsize - offset;
+                ret = OWL_SERVICE_OK;
+            }
+            else {
+              // Buffer pointer is given. We'll copy no more than max_size data into it.
+              // Note: fno.fsize is 32 bit on Fat, 64 bit on ExFat
+              if (offset)
+                res = f_lseek(&SDFile, offset);
+              if (res == FR_OK) {
+                // Finally read into buffer
+                UINT num_read = 0;
+                uint32_t copy_size = min(*max_size, fno.fsize - offset);
+                res = f_read(&SDFile, *buffer, copy_size, &num_read);
+                if (res == FR_OK) {
+                  *max_size = num_read;
+                  ret = OWL_SERVICE_OK;
+                }
+              }
+            }
+            f_close(&SDFile);
+          }
+        }
+        // f_unmount("0:"); // This is a macro in upstream FatFs, but STM code doesn't have it. Why?
+      }
+    }
+#endif
   }
   return ret;
 }

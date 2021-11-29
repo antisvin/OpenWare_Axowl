@@ -298,6 +298,7 @@ NVIC.OTG_HS_IRQn=true\:5\:0\:false\:false\:true\:true\:true\:true
 NVIC.PendSV_IRQn=true\:15\:0\:false\:false\:false\:true\:true\:false
 NVIC.PriorityGroup=NVIC_PRIORITYGROUP_4
 NVIC.SAI1_IRQn=true\:5\:0\:false\:false\:true\:true\:true\:true
+NVIC.SDIO_IRQn=true\:5\:0\:false\:false\:true\:true\:true\:true
 NVIC.SVCall_IRQn=true\:0\:0\:false\:false\:false\:false\:true\:false
 NVIC.SavedPendsvIrqHandlerGenerated=true
 NVIC.SavedSvcallIrqHandlerGenerated=true

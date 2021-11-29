@@ -31,6 +31,7 @@
 #define UART_MIDI_RX_BUFFER_SIZE 256
 
 #define USE_BKPSRAM
+#define USE_FATFS
 
 #define ADC_A 0
 #define ADC_B 1
