@@ -32,6 +32,7 @@
 
 #define USE_BKPSRAM
 #define USE_FATFS
+#define FATFS_USE_DMA
 
 #define ADC_A 0
 #define ADC_B 1

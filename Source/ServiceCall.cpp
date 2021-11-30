@@ -177,7 +177,7 @@ static int handleLoadResource(void** params, int len){
           // Open and seek into file
           res = f_open(&SDFile, name_buf, FA_OPEN_EXISTING | FA_READ);
           if (res == FR_OK) {
-            if (*buffer == nullptr) {
+            if (*buffer == NULL) {
               *max_size = fno.fsize - offset;
                 ret = OWL_SERVICE_OK;
             }

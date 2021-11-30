@@ -35,6 +35,7 @@
 
 #define SD_DEFAULT_BLOCK_SIZE 512
 
+
 /*
 * Depending on the usecase, the SD card initialization could be done at the
 * application level, if it is the case define the flag below to disable
@@ -72,7 +73,9 @@ __ALIGN_BEGIN static uint8_t scratch[BLOCKSIZE] __ALIGN_END;
 
 /* Disk status */
 static volatile DSTATUS Stat = STA_NOINIT;
-static volatile  UINT  WriteStatus = 0, ReadStatus = 0;
+//static volatile  UINT  WriteStatus = 0, ReadStatus = 0;
+static uint32_t WriteStatus = 0;
+static uint32_t ReadStatus  = 0;
 /* Private function prototypes -----------------------------------------------*/
 static DSTATUS SD_CheckStatus(BYTE lun);
 DSTATUS SD_initialize (BYTE);
@@ -168,6 +171,9 @@ DSTATUS SD_status(BYTE lun)
 DRESULT SD_read(BYTE lun, BYTE *buff, DWORD sector, UINT count)
 {
   DRESULT res = RES_ERROR;
+
+#ifdef FATFS_USE_DMA
+
   uint32_t timeout;
 #if defined(ENABLE_SCRATCH_BUFFER)
   uint8_t ret;
@@ -271,6 +277,16 @@ DRESULT SD_read(BYTE lun, BYTE *buff, DWORD sector, UINT count)
     }
 #endif
 
+#else
+    if(BSP_SD_ReadBlocks(
+      (uint32_t *)buff, (uint32_t)(sector), count, SD_TIMEOUT) == HAL_OK) {
+        while(BSP_SD_GetCardState() != MSD_OK) {}
+        res = RES_OK;
+      }
+
+
+#endif // FATFS_USE_DMA
+
   return res;
 }
 /**
@@ -285,6 +301,9 @@ DRESULT SD_read(BYTE lun, BYTE *buff, DWORD sector, UINT count)
 DRESULT SD_write(BYTE lun, const BYTE *buff, DWORD sector, UINT count)
 {
   DRESULT res = RES_ERROR;
+
+#if FATFS_USE_DMA
+
   uint32_t timeout;
 #if defined(ENABLE_SCRATCH_BUFFER)
   uint8_t ret;
@@ -387,6 +406,16 @@ DRESULT SD_write(BYTE lun, const BYTE *buff, DWORD sector, UINT count)
         res = RES_OK;
     }
 #endif
+
+#else
+
+  if(BSP_SD_WriteBlocks(
+    (uint32_t *)buff, (uint32_t)(sector), count, SD_TIMEOUT) == HAL_OK) {
+      while(BSP_SD_GetCardState() != MSD_OK) {}
+      res = RES_OK;
+    }
+#endif // FATFS_USE_DMA
+
   return res;
 }
 #endif /* _USE_WRITE == 1 */
