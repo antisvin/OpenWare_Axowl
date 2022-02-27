@@ -230,15 +230,19 @@ void HAL_PCD_DisconnectCallback(PCD_HandleTypeDef *hpcd)
   */
 USBD_StatusTypeDef USBD_LL_Init(USBD_HandleTypeDef *pdev)
 {
-  if (pdev->id == DEVICE_FS) {
+#ifdef USE_USBD_FS
+  /* if (pdev->id == DEVICE_FS) { */
     /* Link the driver to the stack. */
     hpcd_USB_OTG_FS.pData = pdev;
     pdev->pData = &hpcd_USB_OTG_FS;
-  } else if (pdev->id == DEVICE_HS) {
+#endif
+  /* } else if (pdev->id == DEVICE_HS) { */
+#ifdef USE_USBD_HS
     /* Link the driver to the stack. */
     hpcd_USB_OTG_HS.pData = pdev;
     pdev->pData = &hpcd_USB_OTG_HS;
-  }
+#endif
+  /* } */
   USBD_AUDIO_SetFiFos(pdev->pData);
   return USBD_OK;
 }
@@ -325,6 +329,7 @@ USBD_StatusTypeDef USBD_LL_CloseEP(USBD_HandleTypeDef *pdev, uint8_t ep_addr)
   HAL_StatusTypeDef hal_status = HAL_OK;
   USBD_StatusTypeDef usb_status = USBD_OK;
 
+  USB_DISABLE_EP_BEFORE_CLOSE(ep_addr);
   hal_status = HAL_PCD_EP_Close(pdev->pData, ep_addr);
 
   usb_status =  USBD_Get_USB_Status(hal_status);
