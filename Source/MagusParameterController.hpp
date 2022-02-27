@@ -141,6 +141,10 @@ public:
   uint8_t selectedBlock;
   uint8_t selectedPid[NOF_ENCODERS];
 
+  MagusParameterController(){
+    setDisplayMode(PROGRESS_DISPLAY_MODE);
+  }
+
   void reset(){
     setTitle("Magus");
     ParameterController::reset();
@@ -154,9 +158,6 @@ public:
     selectedPid[3] = PARAMETER_C;
     selectedPid[4] = PARAMETER_E;
     selectedPid[5] = PARAMETER_G;
-
-    setDisplayMode(PROGRESS_DISPLAY_MODE);
-
 #ifdef OWL_MAGUS
     for(int i=0; i<20; ++i)
       setPortMode(i, PORT_UNI_INPUT);
@@ -468,7 +469,7 @@ class ErrorPage : public Page {
     // draw CPU load
     screen.print(110, offset+8, "cpu");
     screen.setCursor(110, offset+17);
-    screen.print((int)((pv->cycles_per_block)/pv->audio_blocksize)/35);
+    screen.print((int)((pv->cycles_per_block)/pv->audio_blocksize)/(ARM_CYCLES_PER_SAMPLE/100));
     screen.print("%");
   }
 };
@@ -747,50 +748,16 @@ public:
     screen.print(1, offset + 17, "cpu ");
     screen.print((int)((pv->cycles_per_block) / pv->audio_blocksize) / 35);
     screen.print("%");
-    
+
     // draw firmware version
     screen.print(1, offset+26, getFirmwareVersion());
-    if (bootloader_token->magic == BOOTLOADER_MAGIC){
-      screen.print(" (bt.");
-      screen.print(getBootloaderVersion());
-      screen.print(")");
-    }
+#ifdef DEBUG_BOOTLOADER
+    if (bootloader_token->magic == BOOTLOADER_MAGIC)
+      screen.print(1, offset+35, getBootloaderVersion());
+#endif
   }
-  
-//   void drawStats(ScreenBuffer& screen){
-//     screen.setTextSize(1);
-//     ProgramVector* pv = getProgramVector();
-//     if(pv->message != NULL)
-//       screen.print(2, 16, pv->message);
-//     screen.print(2, 26, "cpu/mem: ");
-//     float percent = (pv->cycles_per_block/pv->audio_blocksize) / (float)ARM_CYCLES_PER_SAMPLE;
-//     screen.print((int)(percent*100));
-//     screen.print("% ");
-//     screen.print((int)(pv->heap_bytes_used)/1024);
-//     screen.print("kB");
-//     // draw firmware version
-//     screen.print(1, 36, getFirmwareVersion());
-//     if (bootloader_token->magic == BOOTLOADER_MAGIC){
-//       screen.print(" bt.");
-//       screen.print(getBootloaderVersion());
-//     }
-// #ifdef USE_DIGITALBUS
-//     screen.print(1, 56, "Bus: ");
-//     screen.print(bus.getStatusString());
-//     screen.print(" ");
-//     extern uint32_t bus_tx_packets, bus_rx_packets;
-//     screen.print((int)bus_tx_packets);
-//     screen.print("/");
-//     screen.print((int)bus_rx_packets);
-//     if (bus.getStatus() == BUS_STATUS_CONNECTED) {
-//       screen.print(", ");
-//       screen.print(bus.getPeers());
-//       screen.print(" peers");
-//     }
-// #endif
-//   }
 };
-    
+
 class ProgressPage : public Page {
   void draw(ScreenBuffer& screen){
     drawLoadProgress(screen);
