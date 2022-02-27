@@ -62,6 +62,8 @@ void Error_Handler(void);
 #define FLASH_DQ2_GPIO_Port GPIOE
 #define OLED_CS_Pin GPIO_PIN_14
 #define OLED_CS_GPIO_Port GPIOG
+#define OLED_DC_Pin GPIO_PIN_11
+#define OLED_DC_GPIO_Port GPIOC
 #define EXTI13_Pin GPIO_PIN_13
 #define EXTI13_GPIO_Port GPIOC
 #define EXTI13_EXTI_IRQn EXTI15_10_IRQn
@@ -112,9 +114,6 @@ void Error_Handler(void);
 
 #define ADC_RESET_Pin ADC_RST_Pin
 #define ADC_RESET_GPIO_Port ADC_RST_GPIO_Port
-
-  
-
 
 /* USER CODE END Private defines */
 
