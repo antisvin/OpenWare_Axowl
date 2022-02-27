@@ -9,6 +9,8 @@
 #include "errorhandlers.h"
 #include "message.h"
 #include "qint.h"
+#include "usb_device.h"
+#include "usb_host.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -352,7 +354,12 @@ void onChangeMode(OperationMode new_mode, OperationMode old_mode) {
   counter = 0;
 }
 
-void setup() {
+void initLed() {
+    setLed(0, NO_COLOUR);
+    setLed(1, NO_COLOUR);
+}
+
+void onSetup() {
   initLed();
   takeover.setOffset(6, getAnalogValue(ADC_F) - 4095 / 2);
   takeover.setOffset(7, getAnalogValue(ADC_H) - 4095 / 2);
@@ -366,10 +373,15 @@ void setup() {
   // takeover.set(9, settings.audio_output_gain << 5);
   // takeover.reset(9, false);
   patchselect = program.getProgramIndex();
+
+  /* init code for USB_DEVICE */
+  MX_USB_DEVICE_Init();
+
+  /* init code for USB_HOST */
+  MX_USB_HOST_Init();
 }
 
-void loop(void) {
+void onLloop(void) {
   MX_USB_HOST_Process(); // todo: enable PWR management
   updatePreset();
-  owl.loop();
 }
