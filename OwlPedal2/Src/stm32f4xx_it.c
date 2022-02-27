@@ -40,6 +40,7 @@
 #include "task.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "device.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -73,14 +74,14 @@
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
-extern PCD_HandleTypeDef hpcd_USB_OTG_FS;
 extern DMA_HandleTypeDef hdma_adc3;
-extern ADC_HandleTypeDef hadc1;
 extern ADC_HandleTypeDef hadc3;
 extern DMA_HandleTypeDef hdma_sai1_a;
 extern DMA_HandleTypeDef hdma_sai1_b;
 extern SAI_HandleTypeDef hsai_BlockA1;
 extern SAI_HandleTypeDef hsai_BlockB1;
+extern PCD_HandleTypeDef hpcd_USB_OTG_FS;
+extern PCD_HandleTypeDef hpcd_USB_OTG_HS;
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */
@@ -153,7 +154,6 @@ void ADC_IRQHandler(void)
   /* USER CODE BEGIN ADC_IRQn 0 */
 
   /* USER CODE END ADC_IRQn 0 */
-  HAL_ADC_IRQHandler(&hadc1);
   HAL_ADC_IRQHandler(&hadc3);
   /* USER CODE BEGIN ADC_IRQn 1 */
 
@@ -174,6 +174,20 @@ void EXTI9_5_IRQHandler(void)
   /* USER CODE BEGIN EXTI9_5_IRQn 1 */
 
   /* USER CODE END EXTI9_5_IRQn 1 */
+}
+
+/**
+  * @brief This function handles EXTI line[15:10] interrupts.
+  */
+void EXTI15_10_IRQHandler(void)
+{
+  /* USER CODE BEGIN EXTI15_10_IRQn 0 */
+
+  /* USER CODE END EXTI15_10_IRQn 0 */
+  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_10);
+  /* USER CODE BEGIN EXTI15_10_IRQn 1 */
+
+  /* USER CODE END EXTI15_10_IRQn 1 */
 }
 
 /**
@@ -230,6 +244,20 @@ void OTG_FS_IRQHandler(void)
   /* USER CODE BEGIN OTG_FS_IRQn 1 */
 
   /* USER CODE END OTG_FS_IRQn 1 */
+}
+
+/**
+  * @brief This function handles USB On The Go HS global interrupt.
+  */
+void OTG_HS_IRQHandler(void)
+{
+  /* USER CODE BEGIN OTG_HS_IRQn 0 */
+
+  /* USER CODE END OTG_HS_IRQn 0 */
+  HAL_PCD_IRQHandler(&hpcd_USB_OTG_HS);
+  /* USER CODE BEGIN OTG_HS_IRQn 1 */
+
+  /* USER CODE END OTG_HS_IRQn 1 */
 }
 
 /**

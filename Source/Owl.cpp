@@ -163,14 +163,17 @@ void updateLed(){
 }
 #endif /*USE_RGB_LED */
 
-OperationMode Owl::getOperationMode(){
+uint8_t Owl::getOperationMode(){
   return operationMode;
 }
 
-void Owl::setOperationMode(OperationMode mode){
-  OperationMode old_mode = operationMode;
-  operationMode = mode;
-  onChangeMode(mode, old_mode);
+void Owl::setOperationMode(uint8_t mode){
+  if(mode != operationMode){
+    uint8_t old_mode = operationMode;
+    // make sure this is set before calling onChangeMode
+    operationMode = mode;
+    onChangeMode(mode, old_mode);
+  }
 }
 
 void Owl::loop(){
@@ -275,8 +278,7 @@ const char* getDeviceName(){
   static char name[22];
   static char* ptr = 0;
   if(ptr == 0){
-    uint32_t* id = (uint32_t*)UID_BASE; // get a pointer to the 96-bit unique device id
-    unsigned int hash = id[0]^id[1]^id[2]; // hash into 32-bit value
+    uint32_t hash = HAL_GetUIDw0() ^ HAL_GetUIDw1() ^ HAL_GetUIDw2(); // hash into 32-bit value
     hash = (hash>>16)^(hash&0xffff); // hash into 16-bit value
     char* p = stpcpy(name, "OWL-" HARDWARE_VERSION "-");
     stpcpy(p, msg_itoa(hash, 16));

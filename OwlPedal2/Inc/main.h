@@ -80,6 +80,8 @@ extern "C" {
 
 /* USER CODE END EM */
 
+void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
+
 /* Exported functions prototypes ---------------------------------------------*/
 void Error_Handler(void);
 
@@ -127,8 +129,8 @@ void Error_Handler(void);
 #define FLASH_HOLD_GPIO_Port GPIOC
 #define FLASH_nCS_Pin GPIO_PIN_5
 #define FLASH_nCS_GPIO_Port GPIOC
-#define EXP_RING_Pin GPIO_PIN_1
-#define EXP_RING_GPIO_Port GPIOB
+#define FLASH_WP_Pin GPIO_PIN_0
+#define FLASH_WP_GPIO_Port GPIOB
 #define EXP_TIP_Pin GPIO_PIN_2
 #define EXP_TIP_GPIO_Port GPIOB
 #define CS_nCS_Pin GPIO_PIN_10
@@ -149,6 +151,9 @@ void Error_Handler(void);
 #define SW2_Pin GPIO_PIN_9
 #define SW2_GPIO_Port GPIOG
 #define SW2_EXTI_IRQn EXTI9_5_IRQn
+#define SW1_ALT_Pin GPIO_PIN_10
+#define SW1_ALT_GPIO_Port GPIOG
+#define SW1_ALT_EXTI_IRQn EXTI15_10_IRQn
 #define FLASH_SCK_Pin GPIO_PIN_3
 #define FLASH_SCK_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */

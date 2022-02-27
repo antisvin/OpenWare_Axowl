@@ -147,7 +147,7 @@ static int handleLoadResource(void** params, int len){
     Resource* res = storage.getResourceByName(name);
     if (res != NULL) {
       if (*buffer == NULL) {
-        // Buffer pointer not given, so we will update value refenced by max_size with
+        // Buffer pointer not given, so we will update value referenced by max_size with
         // actual resource size here
         *max_size = res->getDataSize() - offset;
         if(res->isMemoryMapped())
