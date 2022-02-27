@@ -36,11 +36,11 @@ extern "C"{
 extern TIM_HandleTypeDef ENCODER_TIM1;
 extern TIM_HandleTypeDef ENCODER_TIM2;
 
-Pin tr_out_a_pin(GPIOD, GPIO_PIN_3);
-Pin tr_out_b_pin(GPIOD, GPIO_PIN_4);
+Pin tr_out_a_pin(GPIOD, GPIO_PIN_4);
+Pin tr_out_b_pin(GPIOD, GPIO_PIN_3);
 
 GeniusParameterController params;
-Graphics graphics;
+Graphics graphics DMA_RAM;
 
 char* progress_message = NULL;
 uint16_t progress_counter = 0;
@@ -75,23 +75,20 @@ void onSetup(){
   tr_out_b_pin.outputMode();
   tr_out_a_pin.high();
   tr_out_b_pin.high();
-  
+  setAnalogValue(PARAMETER_F, 0);
+  setAnalogValue(PARAMETER_G, 0);
   HAL_GPIO_WritePin(OLED_RST_GPIO_Port, OLED_RST_Pin, GPIO_PIN_RESET); // OLED off
   extern SPI_HandleTypeDef OLED_SPI;
   graphics.begin(&params, &OLED_SPI);
-
   progress_counter = 2000;
-
 #ifdef USE_USB_HOST
   // enable USB Host power
   HAL_GPIO_WritePin(USB_HOST_PWR_EN_GPIO_Port, USB_HOST_PWR_EN_Pin, GPIO_PIN_SET);
 #endif
-
   __HAL_TIM_SET_COUNTER(&ENCODER_TIM1, INT16_MAX/2);
   __HAL_TIM_SET_COUNTER(&ENCODER_TIM2, INT16_MAX/2);
   HAL_TIM_Encoder_Start_IT(&ENCODER_TIM1, TIM_CHANNEL_ALL);
   HAL_TIM_Encoder_Start_IT(&ENCODER_TIM2, TIM_CHANNEL_ALL);
-
   progress_counter = 3000;
 }
 
@@ -110,7 +107,8 @@ void setGateValue(uint8_t ch, int16_t value){
 // 12x12 bit multiplication with unsigned operands and result
 #define U12_MUL_U12(a,b) (__USAT(((uint32_t)(a)*(b))>>12, 12))
 static uint16_t scaleForDac(int16_t value){
-  return U12_MUL_U12(value + 70, 3521);
+  // return U12_MUL_U12(value + 70, 3521);
+  return value;
 }
 
 void setAnalogValue(uint8_t ch, int16_t value){
@@ -149,19 +147,22 @@ void onChangePin(uint16_t pin){
 }
 
 extern "C"{
-  // void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc){
-  // }
+  static uint16_t smooth_adc_values[NOF_ADC_VALUES];
+  void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc){
+    // this runs at apprx 3.3kHz
+    // with 64.5 cycles sample time, 30 MHz ADC clock, and ClockPrescaler = 32
+    extern uint16_t adc_values[NOF_ADC_VALUES];
+    for(size_t i=0; i<NOF_ADC_VALUES; ++i){
+      // IIR exponential filter with lambda 0.75: y[n] = 0.75*y[n-1] + 0.25*x[n]
+      smooth_adc_values[i] = (smooth_adc_values[i]*3 + adc_values[i]) >> 2;
+    }
+    // tr_out_a_pin.toggle();
+  }
   void HAL_ADC_ErrorCallback(ADC_HandleTypeDef *hadc){
     error(CONFIG_ERROR, "ADC error");
   }
-
   void updateParameters(int16_t* parameter_values, size_t parameter_len, uint16_t* adc_values, size_t adc_len){
-    // graphics.params.parameters
-    params.updateValues((int16_t*)adc_values, adc_len);
-    // graphics.params.updateValue(0, adc_values[0]);
-    // graphics.params.updateValue(1, adc_values[1]);
-    // parameter_values[0] = adc_values[0]; // todo: sum with user / encoder setting
-    // parameter_values[1] = adc_values[1];
+    params.updateValues((int16_t*)smooth_adc_values, adc_len);
   }
 }
 

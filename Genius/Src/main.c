@@ -21,6 +21,7 @@
 #include "main.h"
 #include "cmsis_os.h"
 #include "usb_host.h"
+#include "usb_host.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -102,7 +103,6 @@ void StartDefaultTask(void const * argument);
 /* USER CODE BEGIN PFP */
 void setup(void);
 void loop(void);
-void MX_USB_HOST_Process(void);
 void SDRAM_Initialization_Sequence(SDRAM_HandleTypeDef *hsdram);
 void initialise_monitor_handles(void);
 void MPU_Config(void);
@@ -271,6 +271,9 @@ void SystemClock_Config(void)
   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE0);
 
   while(!__HAL_PWR_GET_FLAG(PWR_FLAG_VOSRDY)) {}
+  /** Macro to configure the PLL clock source
+  */
+  __HAL_RCC_PLL_PLLSOURCE_CONFIG(RCC_PLLSOURCE_HSE);
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
@@ -330,8 +333,8 @@ static void MX_ADC1_Init(void)
   /** Common config
   */
   hadc1.Instance = ADC1;
-  hadc1.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV4;
-  hadc1.Init.Resolution = ADC_RESOLUTION_12B;
+  hadc1.Init.ClockPrescaler = ADC_CLOCK_ASYNC_DIV32;
+  hadc1.Init.Resolution = ADC_RESOLUTION_12B_OPT;
   hadc1.Init.ScanConvMode = ADC_SCAN_ENABLE;
   hadc1.Init.EOCSelection = ADC_EOC_SEQ_CONV;
   hadc1.Init.LowPowerAutoWait = DISABLE;
@@ -410,7 +413,7 @@ static void MX_DAC1_Init(void)
   */
   sConfig.DAC_SampleAndHold = DAC_SAMPLEANDHOLD_DISABLE;
   sConfig.DAC_Trigger = DAC_TRIGGER_NONE;
-  sConfig.DAC_OutputBuffer = DAC_OUTPUTBUFFER_ENABLE;
+  sConfig.DAC_OutputBuffer = DAC_OUTPUTBUFFER_DISABLE;
   sConfig.DAC_ConnectOnChipPeripheral = DAC_CHIPCONNECT_DISABLE;
   sConfig.DAC_UserTrimming = DAC_TRIMMING_FACTORY;
   if (HAL_DAC_ConfigChannel(&hdac1, &sConfig, DAC_CHANNEL_1) != HAL_OK)
@@ -424,7 +427,12 @@ static void MX_DAC1_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN DAC1_Init 2 */
-
+  /* extern DAC_HandleTypeDef hdac; */
+  /* DAC_ChannelConfTypeDef *sConfig; */
+  /* if (HAL_DACEx_SelfCalibrate(&hdac1, &sConfig, DAC_CHANNEL_1) != HAL_OK) */
+  /*   Error_Handler(); */
+  /* if (HAL_DACEx_SelfCalibrate(&hdac1, &sConfig, DAC_CHANNEL_2) != HAL_OK) */
+  /*   Error_Handler(); */
   /* USER CODE END DAC1_Init 2 */
 
 }
