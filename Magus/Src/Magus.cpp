@@ -9,14 +9,26 @@
 #include "HAL_Encoders.h"
 #include "Pin.h"
 #include "ApplicationSettings.h"
+#include "Storage.h"
+#include "MagusParameterController.hpp"
 
 // 63, 19, 60 // TODO: balance levels
 
 const uint32_t* dyn_rainbowinputs = rainbowinputs;
 const uint32_t* dyn_rainbowoutputs = rainbowoutputs;
+
+MagusParameterController params;
 Graphics graphics;
 
 extern "C" void onResourceUpdate(void);
+
+char* progress_message = NULL;
+uint16_t progress_counter = 0;
+
+void setProgress(uint16_t value, const char* reason){
+  progress_message = (char*)reason;
+  progress_counter = value;
+}
 
 static bool updateMAX11300 = false;
 static uint8_t portMode[20];
@@ -108,7 +120,7 @@ void setup(){
 
   HAL_GPIO_WritePin(OLED_RST_GPIO_Port, OLED_RST_Pin, GPIO_PIN_RESET); // OLED off
   extern SPI_HandleTypeDef OLED_SPI;
-  graphics.begin(&OLED_SPI);
+  graphics.begin(&params, &OLED_SPI);
 
 #ifdef USE_USB_HOST
   // enable USB Host power
@@ -169,34 +181,34 @@ void loop(void){
   TLC5946_Refresh_GS();
 #endif
   Encoders_readAll();
-  graphics.params.updateEncoders(Encoders_get(), 7);
+  params.updateEncoders(Encoders_get(), 7);
   MAX11300_bulkreadADC();
   for(int i=0; i<16; ++i){
     if(getPortMode(i) == PORT_UNI_INPUT){
-      graphics.params.updateValue(i, MAX11300_getADCValue(i+1));
-      uint16_t val = graphics.params.parameters[i]>>2;
+      params.updateValue(i, MAX11300_getADCValue(i+1));
+      uint16_t val = params.getValue(i)>>2;
       setLed(i, dyn_rainbowinputs[val&0x3ff]);
     }else{
       // DACs
     // TODO: store values set from patch somewhere and multiply with user[] value for outputs
-    // graphics.params.updateOutput(i, getOutputValue(i));
-      // MAX11300_setDACValue(i+1, graphics.params.parameters[i]);
-      graphics.params.updateValue(i, 0);
-      uint16_t val = graphics.params.parameters[i]>>2;
+    // params.updateOutput(i, getOutputValue(i));
+      // MAX11300_setDACValue(i+1, params.parameters[i]);
+      params.updateValue(i, 0);
+      uint16_t val = params.getValue(i)>>2;
       setLed(i, dyn_rainbowoutputs[val&0x3ff]);
-      MAX11300_setDAC(i+1, graphics.params.parameters[i]);
+      MAX11300_setDAC(i+1, params.getValue(i));
     }
   }
   for(int i=16; i<20; ++i){
     if(getPortMode(i) == PORT_UNI_INPUT){
-      graphics.params.updateValue(i, MAX11300_getADCValue(i+1));
+      params.updateValue(i, MAX11300_getADCValue(i+1));
     }else{
-      graphics.params.updateValue(i, 0);
-      MAX11300_setDAC(i+1, graphics.params.parameters[i]);
+      params.updateValue(i, 0);
+      MAX11300_setDAC(i+1, params.getValue(i));
     }
   }
-  for(int i=20; i < 40; i++) {
-    graphics.params.updateValue(i, 0);
+  for(int i=20; i < NOF_PARAMETERS; i++) {
+    params.updateValue(i, 0);
   }
   // MAX11300_bulkwriteDAC();
 }

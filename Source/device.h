@@ -8,7 +8,9 @@
 #ifdef USE_SPI_FLASH
 #define MAX_SPI_FLASH_HEADERS        32
 #define FLASH_DEFAULT_FLAGS          RESOURCE_PORT_MAPPED
+#ifndef SPI_FLASH_HSPI
 #define SPI_FLASH_HSPI               hspi1
+#endif
 #define EXTERNAL_STORAGE_SIZE        (8*1024*1024)
 #else
 #define MAX_SPI_FLASH_HEADERS        0
@@ -41,6 +43,7 @@
 #define MIDI_OUTPUT_BUFFER_SIZE      1024
 #define MIDI_INPUT_BUFFER_SIZE       64
 #define MIDI_SYSEX_BUFFER_SIZE       256
+#define USE_MESSAGE_CALLBACK
 
 #ifndef USBD_MAX_POWER
 #define USBD_MAX_POWER               100 // 200mA

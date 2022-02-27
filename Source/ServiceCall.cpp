@@ -10,6 +10,8 @@
 #include "fatfs.h"
 #endif
 
+#include "cmsis_os.h"
+
 #ifdef USE_FFT_TABLES
 #include "arm_const_structs.h"
 #endif /* USE_FFT_TABLES */
@@ -273,6 +275,13 @@ static int handleRegisterCallback(void** params, int len){
       ret = OWL_SERVICE_OK;
     }
 #endif /* USE_MIDI_CALLBACK */
+#ifdef USE_MESSAGE_CALLBACK
+    if(strncmp(SYSTEM_FUNCTION_MESSAGE, name, 3) == 0){
+      // void (*messageCallback)(const char* msg, size_t len);
+      owl.setMessageCallback(callback);
+      ret = OWL_SERVICE_OK;
+    }
+#endif /* USE_MESSAGE_CALLBACK */
   }
   return ret;
 }

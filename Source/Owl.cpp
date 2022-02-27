@@ -151,8 +151,6 @@ void Owl::setup(void){
   codec.setOutputGain(settings.audio_output_gain);
 #endif /* USE_CODEC */
 
-  program.startManager();
-
 #ifdef USE_DAC
   HAL_DAC_Start(&hdac, DAC_CHANNEL_1);
   HAL_DAC_Start(&hdac, DAC_CHANNEL_2);
@@ -178,6 +176,8 @@ void Owl::setup(void){
   bus_setup();
   bus_set_input_channel(settings.midi_input_channel);
 #endif /* USE_DIGITALBUS */
+
+  program.startManager(); // calls bootstrap, loads patch
 }
 
 #ifdef USE_DIGITALBUS
@@ -322,4 +322,16 @@ const char* getDeviceName(){
     ptr = name;
   }
   return ptr;
+}
+
+void Owl::setMessageCallback(void* callback){
+  messageCallback = (void (*)(const char* msg, size_t len))callback;
+}
+
+/**
+ * This method should not be called from an irq handler
+ */
+void Owl::handleMessage(const char* msg, size_t len){
+  if(messageCallback != NULL)
+    messageCallback(msg, len);
 }
