@@ -56,7 +56,9 @@
 #define STORAGE_MAX_BLOCKS           64
 #endif
 
+#ifndef OWL_XIBECA
 #define DEBUG_DWT
+#endif
 /* #define DEBUG_STACK */
 #define DEBUG_STORAGE
 /* #define DEBUG_BOOTLOADER */
@@ -169,11 +171,11 @@
 #define USE_EXTERNAL_RAM
 #endif
 
-#ifndef NO_CCM_RAM
-#define USE_CCM_RAM
-#define CCM_RAM                          __attribute__ ((section (".ccmdata")))
-#else
+#ifdef NO_CCM_RAM
 #define CCM_RAM
+#else
+#define USE_CCM_RAM
+#define CCM_RAM                      __attribute__ ((section (".ccmdata")))
 #endif
 
 #ifndef DMA_RAM

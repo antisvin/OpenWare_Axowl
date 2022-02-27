@@ -150,6 +150,12 @@ void Codec::setHighPass(bool hpf){
   else
     codec_write(82, 0b00000111); // disable HPF for all ADC channels
 #endif
+#ifdef USE_CS4271
+  if(hpf)
+    codec_write(0x06, 0x10); // hp filters enabled
+  else
+    codec_write(0x06, 0x10 | 0x03 ); // hp filters disabled
+#endif
 }
 
 /** Get the number of individual samples (across channels) that have already been 
