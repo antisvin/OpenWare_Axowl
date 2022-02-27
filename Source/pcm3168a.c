@@ -89,7 +89,9 @@ void codec_init(){
 #endif
 
   /* Register: DAC Output Phase */
-  /* codec_write(67, 0xff); // phase invert all DAC channels */
+#ifdef CODEC_DAC_INVERT
+  codec_write(67, 0xff); // phase invert all DAC channels
+#endif
 
   /* Register: DAC Soft Mute Control */
   /* codec_write(68, 0xff); // enable soft mute for all DAC channels */
@@ -98,6 +100,7 @@ void codec_init(){
 /*   Each DAC channel (VOUTx) has a digital attenuator function. The attenuation level can be set from 0 dB to –100 dB in */
 /* 0.5-dB steps, and also can be set to infinite attenuation (mute). The attenuation level change from current value to target */
 /* value is performed by incrementing or decrementing with s-curve responses and a time set by ATSPDA. */
+  codec_write(70, 0b1000000); // ATMDDA=1 All channels with preset (independent) data + master (common) data in decibel number
 
   /* Data formats, see Table 11 p.33 */
 
@@ -122,7 +125,9 @@ void codec_init(){
   codec_write(83, 0b00111111); // singled ended inputs on all ADC channels
 
   /* Register: ADC Input Phase */
+#ifdef CODEC_ADC_INVERT
   codec_write(84, 0b00111111); // phase invert all ADC channels
+#endif
 
   /* Register: ADC Overflow Flag */
 /*   ADC Overflow flag (read-only) */
@@ -134,6 +139,7 @@ void codec_init(){
 /*   Each ADC channel has a digital attenuator function with 20-dB gain. The attenuation level can be set from 20 dB to –100 */
 /* dB in 0.5-dB steps, and also can be set to infinite attenuation (mute). The attenuation level change from current value to */
 /* target value is performed by increment or decrement with s-curve response and time set by ATSPAD. */
+  codec_write(87, 0b1000000); // ATMDAD=1 All channels with preset (independent) data + master (common) data in decibel number
 
   /* codec_reset(); */
 
@@ -157,7 +163,7 @@ void codec_mute(bool mute){
 void codec_set_gain_in(int8_t level){
   /* Register 88: ADC Digital attenuation level setting */
   uint8_t value = level+128;
-  codec_write(88, value); // 
+  codec_write(88, value); // set master attenuation level ATAD0[7:0]
 }
 
 /**
@@ -166,6 +172,6 @@ void codec_set_gain_in(int8_t level){
 void codec_set_gain_out(int8_t level){
   /* Register 71: DAC Digital attenuation level setting */
   uint8_t value = level+128;
-  codec_write(71, value); // 
+  codec_write(71, value); // set master attenuation level ATDA0[7:0]
 }
 

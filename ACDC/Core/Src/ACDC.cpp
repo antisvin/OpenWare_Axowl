@@ -45,12 +45,15 @@ Pin led_out3(XIBECA_PIN23);
 Pin led_out4(XIBECA_PIN24);
 
 void setLed(uint8_t led, uint32_t rgb){
-  uint32_t pwm = 0xFFFFFFFFU - __USAT(rgb>>10, 10);
+  uint32_t pwm = 1023 - (__USAT(rgb>>2, 10)); // expects 12-bit parameter value
   switch(led){
   case 1:
     if(rgb == RED_COLOUR){
       led_in1.high();
       led_clip1.low();
+    }else if(rgb == NO_COLOUR){
+      led_in1.high();
+      led_clip1.high();
     }else{
       led_in1.low();
       led_clip1.high();
@@ -60,6 +63,9 @@ void setLed(uint8_t led, uint32_t rgb){
     if(rgb == RED_COLOUR){
       led_in2.high();
       led_clip2.low();
+    }else if(rgb == NO_COLOUR){
+      led_in2.high();
+      led_clip2.high();
     }else{
       led_in2.low();
       led_clip2.high();
@@ -120,7 +126,7 @@ void initLed(){
   HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_2); // out4
   // HAL_TIM_PWM_Start(&htim5, TIM_CHANNEL_1); // clip1
   HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_1); // out1
-  HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_1); // out2
+  HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_2); // out2
 
   led_in1.outputMode();
   led_in2.outputMode();
@@ -155,6 +161,6 @@ void onSetup(){
 void onLoop(void){  
   for(size_t i=0; i<4; ++i){
     setLed(i+1, getParameterValue(PARAMETER_AA+i));
-    setLed(i+4, getParameterValue(PARAMETER_BA+i));
+    setLed(i+5, getParameterValue(PARAMETER_BA+i));
   }
 }
