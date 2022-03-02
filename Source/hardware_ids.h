@@ -19,7 +19,12 @@
 #define GENIUS_HARDWARE             0x20
 #define OWL_PEDAL_HARDWARE          0x21
 #define OWL_MODULAR_HARDWARE        0x22
-#define AXOLOTI_HARDWARE            0xA2
+#define XIBECA_HARDWARE             0x23
+#define DAISY_PATCH_HARDWARE        0xa0
+#define PREENFM_HARDWARE            0xa1
+#define AXOLOTI_HARDWARE            0xa2
+#define LOOP_HARDWARE               0xa3
+#define BLUEMCHEN_HARDWARE          0xa4
 #define OTHER_HARDWARE              0xf0
 
 #endif /* __HARDWARE_IDS_H */

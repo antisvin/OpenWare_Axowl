@@ -32,6 +32,7 @@
 /* USER CODE END FirstSection */
 /* Includes ------------------------------------------------------------------*/
 #include "bsp_driver_sd.h"
+#include "device.h"
 
 /* Extern variables ---------------------------------------------------------*/
 
@@ -302,10 +303,12 @@ __weak uint8_t BSP_SD_IsDetected(void)
 {
   __IO uint8_t status = SD_PRESENT;
 
-  if (BSP_PlatformIsDetected() == 0x0)
+#ifdef SD_DETECT_GPIO_Port
+  if(HAL_GPIO_ReadPin(SD_DETECT_GPIO_Port, SD_DETECT_Pin) != GPIO_PIN_RESET)
   {
     status = SD_NOT_PRESENT;
   }
+#endif
 
   return status;
 }

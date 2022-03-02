@@ -9,8 +9,11 @@
 #include "errorhandlers.h"
 #include "message.h"
 #include "qint.h"
+#include "usb_device.h"
+#include "usb_host.h"
 #include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
 
 #ifndef min
 #define min(a, b) ((a) < (b) ? (a) : (b))
@@ -329,7 +332,7 @@ void onStartProgram() {
   memset(button_led_values, 0, sizeof(button_led_values)); // reset leds
 }
 
-void onChangeMode(OperationMode new_mode, OperationMode old_mode) {  
+void onChangeMode(uint8_t new_mode, uint8_t old_mode) {  
   if (new_mode == CONFIGURE_MODE) {
     // entering config mode
     setLed(5, GREEN_COLOUR);
@@ -352,13 +355,17 @@ void onChangeMode(OperationMode new_mode, OperationMode old_mode) {
   counter = 0;
 }
 
-void setup() {
+void initLed() {
+  for (uint8_t i = 1; i <= 6; i++)
+    setLed(i, NO_COLOUR);
+}
+
+void onSetup() {
   initLed();
   takeover.setOffset(6, getAnalogValue(ADC_F) - 4095 / 2);
   takeover.setOffset(7, getAnalogValue(ADC_H) - 4095 / 2);
   led_green.set(false);
   led_red.set(false);
-  owl.setup();
   for (size_t i = 5; i < 8; ++i) {
     takeover.set(i, CV_ATTENUATION_DEFAULT);
     takeover.reset(i, false);
@@ -366,10 +373,15 @@ void setup() {
   // takeover.set(9, settings.audio_output_gain << 5);
   // takeover.reset(9, false);
   patchselect = program.getProgramIndex();
+
+  /* init code for USB_DEVICE */
+  MX_USB_DEVICE_Init();
+
+  /* init code for USB_HOST */
+  MX_USB_HOST_Init();
 }
 
-void loop(void) {
+void onLoop() {
   MX_USB_HOST_Process(); // todo: enable PWR management
   updatePreset();
-  owl.loop();
 }
