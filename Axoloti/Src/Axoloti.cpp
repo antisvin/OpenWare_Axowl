@@ -5,6 +5,7 @@
 #include "PatchRegistry.h"
 #include "Pin.h"
 #include "ProgramManager.h"
+#include "TakeoverControls.h"
 #include "device.h"
 #include "errorhandlers.h"
 #include "message.h"
@@ -51,46 +52,6 @@ Pin sw3(SW3_GPIO_Port, SW3_Pin);
 Pin sw_joy(SWJOY_GPIO_Port, SWJOY_Pin);
 Pin s1(S1_GPIO_Port, S1_Pin);
 Pin s2(S2_GPIO_Port, S2_Pin);
-
-template <size_t SIZE, typename value_t> class TakeoverControls {
-private:
-  value_t values[SIZE];
-  bool takeover[SIZE];
-  value_t offsets[SIZE];
-
-public:
-  TakeoverControls() {
-    reset(true);
-    for (size_t i = 0; i < SIZE; i++) {
-      offsets[i] = value_t();
-    }
-  }
-  void setOffset(uint8_t index, value_t offset) { offsets[index] = offset; }
-  value_t get(uint8_t index) { return values[index]; }
-  void set(uint8_t index, value_t value) { values[index] = value; }
-  void setWithOffset(uint8_t index, value_t value) {
-    values[index] = value - offsets[index];
-  }
-  void update(uint8_t index, value_t value, value_t threshold) {
-    value -= offsets[index];
-    if (takeover[index]) {
-      values[index] = value;
-    } else if (abs(values[index] - value) < threshold) {
-      takeover[index] = true;
-      values[index] = value;
-    }
-  }
-  bool taken(uint8_t index) { return takeover[index]; }
-  /**
-   * If @param state is true, then the control is taken.
-   * If the control is taken it reflects the current knob setting.
-   */
-  void reset(uint8_t index, bool state) { takeover[index] = state; }
-  void reset(bool state) {
-    for (size_t i = 0; i < SIZE; ++i)
-      takeover[i] = state;
-  }
-};
 
 TakeoverControls<8, int16_t> takeover;
 bool button_led_values[4] = {false};
@@ -319,8 +280,8 @@ void onStartProgram() {
   takeover.set(3, getAnalogValue(ADC_D));
   takeover.set(4, getAnalogValue(ADC_E));
   takeover.set(5, getAnalogValue(ADC_F));
-  takeover.setWithOffset(6, getAnalogValue(ADC_G));
-  takeover.setWithOffset(7, getAnalogValue(ADC_H));
+  takeover.set(6, getAnalogValue(ADC_G));
+  takeover.set(7, getAnalogValue(ADC_H));
   takeover.reset(0, true);
   takeover.reset(1, true);
   takeover.reset(2, true);
@@ -362,8 +323,8 @@ void initLed() {
 
 void onSetup() {
   initLed();
-  takeover.setOffset(6, getAnalogValue(ADC_F) - 4095 / 2);
-  takeover.setOffset(7, getAnalogValue(ADC_H) - 4095 / 2);
+//  takeover.setOffset(6, getAnalogValue(ADC_G) - 4095 / 2);
+//  takeover.setOffset(7, getAnalogValue(ADC_H) - 4095 / 2);
   led_green.set(false);
   led_red.set(false);
   for (size_t i = 5; i < 8; ++i) {
