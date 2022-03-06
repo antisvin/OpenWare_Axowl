@@ -7,22 +7,9 @@ import shutil
 import subprocess
 
 PROJECTS = {
-    'MidiBootOwl': [
-        {
-            'OwlPedal': ['Modular=OwlModular', 'Pedal=OwlPedal']
-        }
-    ],
-    'MidiBoot': [
-        'Alchemist', 'Wizard', 'Magus', 'Lich', 'Witch',
-        { 'OwlPedal2': ['Pedal=OwlPedal2'] }
-        # 'Noctua', 'BioSignals', not needed
-        # 'Effectsbox' won't build bootloader
-    ],
-    'MidiBoot3': [
-        'Genius'
-    ],
-    #None: ['Expander'] #- expander currently won't build
-    #, 'MagusEncoder' - no F0 HAL in libraries
+    'AxolotiBoot': [
+        'Axoloti'
+    ]
 }
 
 
