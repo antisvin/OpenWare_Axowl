@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <stdint.h>
 
 template<size_t SIZE, typename value_t>
@@ -18,7 +19,7 @@ public:
   void update(uint8_t index, value_t value, value_t threshold){
     if(takeover[index]){
       values[index] = value;
-    }else if(abs(values[index] - value) < threshold){
+    }else if(std::abs(values[index] - value) < threshold){
       takeover[index] = true;
       values[index] = value;
     }
